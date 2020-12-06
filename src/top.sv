@@ -1,4 +1,4 @@
-module UART_top #(parameter clk_freq_Hz = 1000000,
+module UART_top #(parameter debounce_period_Hz = 1000000,
                   parameter clk_divisor = 1000000,
                   parameter tx_num_bits = 8,
                   parameter parity = 0)
@@ -17,7 +17,7 @@ module UART_top #(parameter clk_freq_Hz = 1000000,
 //debouncer + one shot for start button in
 logic button_debounced, one_shot_out;
 
-debouncer #(clk_freq_Hz)
+debouncer #(debounce_period_Hz)
 debouncer (.clk(clk),
                      .RSTn(RSTn),
                      .button_in(start),
@@ -31,7 +31,8 @@ one_shot one_shot (.clk(clk),
 );
 
 //TX fsm
-tx_fsm tx_fsm (.clk(clk),
+tx_fsm #(clk_divisor, tx_num_bits, parity)
+tx_fsm (.clk(clk),
                .RSTn(RSTn),
                .start(one_shot_out),
                .data_in(data_in),
