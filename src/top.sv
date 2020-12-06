@@ -1,4 +1,7 @@
-module UART_top #(parameter clk_freq_Hz = 1000000)
+module UART_top #(parameter clk_freq_Hz = 1000000,
+                  parameter clk_divisor = 1000000,
+                  parameter tx_num_bits = 8,
+                  parameter parity = 0)
 (
   input logic               clk,
   input logic               RSTn,

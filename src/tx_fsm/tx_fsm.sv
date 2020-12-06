@@ -1,4 +1,9 @@
-module tx_fsm #(parameter divisor = 10)
+//tx_num_bits -> number to be transmitted for each UART trannsmission (usually between 5 and 8)
+//parity -> 0 is even parity, 1 is odd parity
+
+module tx_fsm #(parameter divisor = 10,
+                parameter tx_num_bits = 8,
+                parameter parity = 0)
 (
   input logic               clk,
   input logic               RSTn,
@@ -18,9 +23,19 @@ d_reg #(8) reg_data_in (.d(data_in),
 
 //parameter assignment
 logic[31:0] div_param, half_div_param;
+logic[3:0] num_bits;
+logic parity_bit;
+logic[tx_num_bits-1:0] tx_data;
 
 assign div_param = divisor;
 assign half_div_param  = {1'b0, div_param[31:1]};
+assign num_bits = tx_num_bits;
+assign tx_data = sampled_data[tx_num_bits-1:0];
+
+if(parity == 0)
+  assign parity_bit = ^tx_data;
+else
+  assign parity_bit = ~(^tx_data);
 
 //fsm for tx operation
 
@@ -28,7 +43,8 @@ parameter IDLE         = 3'b000,
           SYNC         = 3'b001,
           TX_BIT       = 3'b010,
           TX_STOP      = 3'b011,
-          TX_START     = 3'b100;
+          TX_START     = 3'b100,
+          TX_PARITY    = 3'b101;
 
 logic[2:0] state, next_state;
 logic tx_sig;
@@ -48,7 +64,12 @@ begin
     end
     SYNC :
     begin
-      if(bit_count == 4'b1000)
+      if(bit_count == num_bits)
+        if(baud_count == div_param - 32'b1)
+          next_state = TX_PARITY;
+        else
+          next_state = SYNC;
+      else if(bit_count == num_bits + 1)
         if(baud_count == div_param - 32'b1)
           next_state = TX_STOP;
         else
@@ -73,6 +94,10 @@ begin
       next_state = IDLE;
     end
     TX_START :
+    begin
+      next_state = SYNC;
+    end
+    TX_PARITY :
     begin
       next_state = SYNC;
     end
@@ -126,6 +151,13 @@ begin
       baud_count <= 32'b0;
       bit_count  <= 4'b0;
       start_done <= 1'b1;
+    end
+    TX_PARITY :
+    begin
+      tx_sig     <= parity_bit;
+      baud_count <= 32'b0;
+      bit_count  <= bit_count + 4'b1;
+      start_done <= start_done;
     end
     default :
     begin

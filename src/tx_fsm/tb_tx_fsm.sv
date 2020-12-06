@@ -13,15 +13,15 @@ begin
   RSTn = 1'b0;
   start = 1'b0;
   clk = 1'b0;
-  data_in = 8'b01010101;
+  data_in = 8'b01001010;
   #40us;
   RSTn = 1'b1;
   start = 1'b1;
-  data_in = 8'b01010101;
+  data_in = 8'b01001010;
   #10us;
   RSTn = 1'b1;
   start = 1'b0;
-  data_in = 8'b01010101;
+  data_in = 8'b01001010;
 end
 
 // Clock generator
