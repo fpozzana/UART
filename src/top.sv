@@ -1,6 +1,6 @@
 module UART_top #(parameter debounce_period_Hz = 1000000,
                   parameter clk_divisor = 1000000,
-                  parameter tx_num_bits = 8,
+                  parameter num_bits = 8,
                   parameter parity = 0)
 (
   input logic               clk,
@@ -31,7 +31,7 @@ one_shot one_shot (.clk(clk),
 );
 
 //TX fsm
-tx_fsm #(clk_divisor, tx_num_bits, parity)
+tx_fsm #(.divisor(clk_divisor), .tx_num_bits(num_bits), .parity(parity))
 tx_fsm (.clk(clk),
                .RSTn(RSTn),
                .start(one_shot_out),
