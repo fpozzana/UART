@@ -49,17 +49,17 @@ begin
     SYNC :
     begin
       if(bit_count == 4'b1000)
-        if(baud_count == div_param)
+        if(baud_count == div_param - 32'b1)
           next_state = TX_STOP;
         else
           next_state = SYNC;
       else if(start_done == 1'b0)
-        if(baud_count == half_div_param)
+        if(baud_count == half_div_param - 32'b1)
           next_state = TX_START;
         else
           next_state = SYNC;
       else
-        if(baud_count == div_param)
+        if(baud_count == div_param - 32'b1)
           next_state = TX_BIT;
         else
           next_state = SYNC;
