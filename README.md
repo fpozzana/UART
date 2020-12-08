@@ -17,3 +17,6 @@ debounce_period_Hz - debounce period for button start
 clk_divisor        - system clock divisor for correct baud clock  
 num_bits           - number of bits for each transmission  
 parity             - even or odd parity selection  
+
+## UART transmission package
+start_bit [1] - data_bits [num_bits] - parity_bit [1] - stop_bit [1]
