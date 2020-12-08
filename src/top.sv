@@ -33,10 +33,19 @@ one_shot one_shot (.clk(clk),
 //TX fsm
 tx_fsm #(.divisor(clk_divisor), .tx_num_bits(num_bits), .parity(parity))
 tx_fsm (.clk(clk),
-               .RSTn(RSTn),
-               .start(one_shot_out),
-               .data_in(data_in),
-               .TX(TX)
+        .RSTn(RSTn),
+        .start(one_shot_out),
+        .data_in(data_in),
+        .TX(TX)
 );
+
+//RX fsm
+rx_fsm #(.divisor(clk_divisor), .rx_num_bits(num_bits), .parity(parity))
+rx_fsm (.clk(clk),
+        .RSTn(RSTn),
+        .data_out(data_out),
+        .RX(RX)
+);
+
 
 endmodule
