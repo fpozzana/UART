@@ -47,5 +47,4 @@ rx_fsm (.clk(clk),
         .RX(RX)
 );
 
-
 endmodule
